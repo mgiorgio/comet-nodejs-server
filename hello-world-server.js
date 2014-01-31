@@ -3,8 +3,6 @@ var app = require('http').createServer(handler), io = require('socket.io')
 
 app.listen(12345);
 
-var list = [];
-
 function handler(req, res) {
 	fs.readFile(__dirname + '/index.html', function(err, data) {
 		if (err) {
@@ -19,7 +17,6 @@ function handler(req, res) {
 
 
 io.sockets.on('connection', function(socket) {
-	list.push(socket);
 });
 
 io.sockets.on('disconnection', function(socket) {
@@ -35,9 +32,7 @@ client.connect('guest', 'guest', function() {
 		if (message.body) {
 			console.log('Received message: ' + message.body);
 			
-			list.forEach(function(item, index) {
-				item.emit('news', {hello:message.body});
-			});
+			io.sockets.emit('news', message.body);
 			
 		} else {
 			console.log('Empty message');
