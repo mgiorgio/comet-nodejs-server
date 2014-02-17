@@ -25,7 +25,7 @@ io.sockets.on('connection', function(socket) {
 	socket.set('subs', new Array());
 
 	socket.on('subscribe', function(fn) {
-		var subscription = stompClient.subscribe('/queue/test', function(message) {
+		var subscription = stompClient.subscribe('/exchange/events/#', function(message) {
 			if (message.body) {
 				console.log('Received ' + message.body);
 				socket.emit('update', message.body);
