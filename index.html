@@ -5,10 +5,7 @@
 <script>
 var eventsCounter = 0;
 var socket = io.connect('http://localhost');
-socket.on('news', function (data) {
-	//document.write(data);
-	//document.write('<br />');
-	console.log(data);
+socket.on('update', function (data) {
 	eventsCounter++;
 });
 </script>
@@ -95,6 +92,19 @@ $(function () {
     
 });
 </script>
+<script>
+	var subid;
+	function subscribe() {
+		socket.emit('subscribe', function (data) {
+			subid = data;
+		});
+	}
+	function unsubscribe() {
+		socket.emit('unsubscribe', {id: subid});
+	}
+</script>
+<input type="button" onclick="javascript:subscribe()" value="Subscribe" />
+<input type="button" onclick="javascript:unsubscribe()" value="Unsubscribe" />
 <div id="container" style="width:100%; height:400px;"></div>
 </body>
 </html>
