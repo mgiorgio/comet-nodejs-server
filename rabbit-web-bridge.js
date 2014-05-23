@@ -1,10 +1,10 @@
 /*
  * Web Server.
  */
-var app = require('http').createServer(handler), io = require('socket.io')
-		.listen(app), fs = require('fs');
-
-app.listen(12345);
+var server = require('http').createServer(handler), io = require('socket.io')
+		.listen(server), fs = require('fs');
+		
+server.listen(12345);
 
 function handler(req, res) {
 	fs.readFile(__dirname + '/index.html', function(err, data) {
@@ -12,7 +12,10 @@ function handler(req, res) {
 			res.writeHead(500);
 			return res.end('Error loading index.html');
 		}
-
+		
+//		res.writeHead(200, {
+//			'Access-Control-Allow-Origin':'http://jslate.com/'
+//		});
 		res.writeHead(200);
 		res.end(data);
 	});
@@ -22,7 +25,7 @@ function handler(req, res) {
  * Web Client operations/
  */
 io.sockets.on('connection', function(socket) {
-	socket.set('subs', new Array());
+	socket.set('subs', []);
 
 	socket.on('subscribe', function(data, fn) {
 		var subscription = stompClient.subscribe('/exchange/events/' + data.island + "." + data.actor, function(message) {
@@ -66,4 +69,8 @@ io.sockets.on('connection', function(socket) {
 var Stomp = require('stompjs');
 var stompClient = Stomp.overTCP('localhost', 61613);
 
-stompClient.connect('guest', 'guest');
+stompClient.connect('guest', 'guest', function() {
+	console.log("STOMP connection: OK.");
+}, function(error) {
+	console.log("STOMP connection: " + error);
+});
